@@ -276,6 +276,33 @@ static const CGFloat MarginRight = MarginLeft;
     return image;
 }
 
+-(UIImage *)cropImage:(UIImage *)image
+{
+    CGRect cropRect = [self convertRect:self.scrollView.frame toView:self.zoomingView];
+    CGSize size = image.size;
+    
+    CGFloat ratio = 1.0f;
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad || UIInterfaceOrientationIsPortrait(orientation)) {
+        ratio = CGRectGetWidth(AVMakeRectWithAspectRatioInsideRect(image.size, self.insetRect)) / size.width;
+    } else {
+        ratio = CGRectGetHeight(AVMakeRectWithAspectRatioInsideRect(image.size, self.insetRect)) / size.height;
+    }
+    
+    CGRect zoomedCropRect = CGRectMake(cropRect.origin.x / ratio,
+                                       cropRect.origin.y / ratio,
+                                       cropRect.size.width / ratio,
+                                       cropRect.size.height / ratio);
+    
+    UIImage *rotatedImage = [self rotatedImageWithImage:image transform:self.imageView.transform];
+    
+    CGImageRef croppedImage = CGImageCreateWithImageInRect(rotatedImage.CGImage, zoomedCropRect);
+    UIImage *resultImage = [UIImage imageWithCGImage:croppedImage scale:1.0f orientation:rotatedImage.imageOrientation];
+    CGImageRelease(croppedImage);
+    
+    return resultImage;
+}
+
 - (UIImage *)rotatedImageWithImage:(UIImage *)image transform:(CGAffineTransform)transform
 {
     CGSize size = image.size;

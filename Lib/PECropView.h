@@ -18,5 +18,6 @@
 @property (nonatomic) CGRect cropRect;
 
 -(void)disableRotation;
+-(UIImage *)cropImage:(UIImage *)image;
 
 @end
