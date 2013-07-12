@@ -17,4 +17,6 @@
 @property (nonatomic) CGFloat aspectRatio;
 @property (nonatomic) CGRect cropRect;
 
+-(void)disableRotation;
+
 @end

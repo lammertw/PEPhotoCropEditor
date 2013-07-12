@@ -32,6 +32,8 @@ static const CGFloat MarginRight = MarginLeft;
 @property (nonatomic, getter = isResizing) BOOL resizing;
 @property (nonatomic) UIInterfaceOrientation interfaceOrientation;
 
+@property (strong, nonatomic) UIRotationGestureRecognizer *rotationGestureRecognizer;
+
 @end
 
 @implementation PECropView
@@ -73,9 +75,9 @@ static const CGFloat MarginRight = MarginLeft;
     self.scrollView.clipsToBounds = NO;
     [self addSubview:self.scrollView];
     
-    UIRotationGestureRecognizer *rotationGestureRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
-    rotationGestureRecognizer.delegate = self;
-    [self.scrollView addGestureRecognizer:rotationGestureRecognizer];
+    self.rotationGestureRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
+    self.rotationGestureRecognizer.delegate = self;
+    [self.scrollView addGestureRecognizer:self.rotationGestureRecognizer];
     
     self.cropRectView = [[PECropRectView alloc] init];
     self.cropRectView.delegate = self;
@@ -193,6 +195,11 @@ static const CGFloat MarginRight = MarginLeft;
     self.imageView.contentMode = UIViewContentModeScaleAspectFit;
     self.imageView.image = self.image;
     [self.zoomingView addSubview:self.imageView];
+}
+
+-(void)disableRotation
+{
+    [self.scrollView removeGestureRecognizer:self.rotationGestureRecognizer];
 }
 
 #pragma mark -
